@@ -1,0 +1,336 @@
+/* Root layout */
+.pe-root {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #f5f7fb;   /* ✅ light page background */
+  color: #111827;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+/* Toolbar */
+.pe-toolbar {
+  height: 56px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 12px;
+  background: #ffffff;                 /* ✅ white toolbar */
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.pe-toolbar .left,
+.pe-toolbar .center,
+.pe-toolbar .right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pe-toolbar .left {
+  min-width: 240px;
+}
+
+.pe-toolbar .center {
+  flex: 1;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.pe-toolbar .right {
+  min-width: 240px;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Buttons */
+.btn {
+  height: 34px;
+  padding: 0 12px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  color: #111827;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background: #f3f4f6;
+}
+
+.btn.primary {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #fff;
+}
+.btn.primary:hover {
+  filter: brightness(1.05);
+}
+
+/* Tool buttons */
+.tool {
+  height: 34px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  color: #111827;
+  cursor: pointer;
+}
+.tool:hover {
+  background: #f3f4f6;
+}
+.tool.active {
+  background: #111827;
+  color: #ffffff;
+  border-color: #111827;
+}
+
+/* Badge */
+.badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.badge .title {
+  font-weight: 800;
+  letter-spacing: 0.2px;
+}
+.badge .pill {
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #eef2ff;
+  border: 1px solid #c7d2fe;
+  color: #3730a3;
+}
+
+/* Stage placeholder */
+.pe-stage-area {
+  flex: 1;
+  padding: 12px;
+}
+
+/* ✅ White "canvas" surface */
+.pe-stage-placeholder {
+  height: 100%;
+  border-radius: 14px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;                 /* ✅ white canvas area */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+}
+
+.pe-stage-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: #111827;
+}
+
+.pe-stage-sub {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+/* Status bar */
+.pe-status {
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: #ffffff;
+  border-top: 1px solid #e5e7eb;
+  color: #6b7280;
+  font-size: 13px;
+}
+.pe-status .dot {
+  opacity: 0.6;
+}
+/* ✅ White canvas surface for Konva */
+.pe-stage-surface {
+  height: 100%;
+  border-radius: 14px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+  overflow: hidden; /* important */
+  position: relative;
+}
+
+/* ✅ Konva container must fill */
+.pe-stage-host {
+  width: 100%;
+  height: 100%;
+}
+/* ✅ options row inside center toolbar */
+.pe-options {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-left: 14px;
+  margin-left: 12px;
+  border-left: 1px solid #e5e7eb;
+  flex-wrap: wrap;
+}
+
+.pe-toolbar {
+  height: auto;                /* ✅ fixed height हटाओ */
+  min-height: 56px;
+  flex-wrap: wrap;             /* ✅ wrap nicely */
+  align-items: center;
+  row-gap: 8px;
+}
+
+.pe-toolbar .center {
+  flex: 1;
+  justify-content: center;
+  align-items: center;         /* ✅ */
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+
+
+
+.opt-group {
+  display: inline-flex;        /* ✅ baseline issue fix */
+  align-items: center;
+  gap: 8px;
+  height: 38px;                /* ✅ same height */
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  padding: 0 10px;             /* ✅ vertical padding हटाकर height control */
+  border-radius: 12px;
+}
+
+.opt-label {
+  font-size: 12px;
+  color: #6b7280;
+  font-weight: 600;
+}
+
+/* dropdown */
+.select {
+  height: 30px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  padding: 0 10px;
+  background: #ffffff;
+  color: #111827;
+  font-size: 13px;
+  outline: none;
+}
+
+.select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+/* slider */
+.range {
+  width: 130px;
+  accent-color: #2563eb;
+}
+
+.chip {
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  color: #111827;
+  font-weight: 700;
+}
+
+/* shape buttons */
+.shape-btn {
+  display: inline-flex;        /* ✅ */
+  align-items: center;         /* ✅ */
+  justify-content: center;     /* ✅ */
+  width: 34px;
+  height: 30px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;              /* ✅ */
+  padding: 0;                  /* ✅ */
+}
+
+.shape-btn:hover {
+  background: #f3f4f6;
+}
+
+/* ✅ responsive: toolbar center wrapping nice */
+.pe-toolbar .center {
+  gap: 10px;
+}
+.shape-btn.active{
+  border-color:#2563eb;
+  box-shadow:0 0 0 3px rgba(37,99,235,0.15);
+}
+.text-editor {
+  position: absolute;
+  z-index: 9999;
+  border: 2px solid #2563eb;
+  border-radius: 10px;
+  padding: 10px;
+  outline: none;
+  resize: none;
+  background: #ffffff;
+  color: #111827;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+  line-height: 1.3;
+}
+.stage-wrap {
+  position: relative;
+}
+.pe-tool-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pe-btn {
+  height: 34px;
+  padding: 0 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 999px;
+  background: #fff;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.pe-btn:hover {
+  border-color: #2563eb;
+}
+
+.pe-hidden-file {
+  display: none;
+}
+.pe-actions{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-left:auto;
+}
+
+.divider{
+  width:1px;
+  height:28px;
+  background:#d9dde7;
+}
+.color-input{
+  width: 34px;
+  height: 34px;
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+}

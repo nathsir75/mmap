@@ -1,0 +1,97 @@
+<div class="mm-shell">
+  <!-- TOP BAR -->
+  <header class="mm-topbar">
+    <div class="mm-brand">
+      <div class="mm-title">Mindmap</div>
+      <div class="mm-sub">Konva canvas • nodes + edges • drag/select</div>
+   
+    </div>
+
+    <div class="mm-actions">
+    <button class="btn" (click)="centerOnNode(store.selectedNodeId()!)" [disabled]="!store.selectedNodeId()"> Center</button>
+    <button (click)="workspace.exportBackup()">
+  Export Backup
+</button>
+
+<input
+  type="file"
+  accept=".json"
+  hidden
+  #fileInput
+  (change)="workspace.importBackup(fileInput.files![0])"
+/>
+
+<button (click)="fileInput.click()">
+  Import Backup
+</button>
+    <button class="btn" (click)="fitAll()">Fit</button>
+      <button class="btn" (click)="createChild()" [disabled]="!store.selectedNode()">+ Child Node</button>
+      <button class="btn" (click)="openEditor()" [disabled]="!store.selectedNode()">Edit (Open Editor)</button>
+      <button class="btn" (click)="pushCropPlaceholder()" [disabled]="!store.selectedNode()">Push Crop (Dummy)</button>
+      <button class="btn danger" (click)="deleteNode()" [disabled]="!store.selectedNode()">Delete</button>
+    </div>
+  </header>
+
+  <!-- BODY -->
+  <div class="mm-body">
+    <!-- LEFT INSPECTOR (collapsible) -->
+    <aside class="mm-inspector" [class.is-collapsed]="inspectorCollapsed()">
+      <div class="inspector-head">
+        <div class="inspector-title" [class.hide]="inspectorCollapsed()">Selected Node</div>
+        <button class="icon-btn" (click)="toggleInspector()"
+          [title]="inspectorCollapsed() ? 'Expand' : 'Collapse'">
+          {{ inspectorCollapsed() ? '»' : '«' }}
+        </button>
+      </div>
+
+      <div class="inspector-content" *ngIf="!inspectorCollapsed()">
+        <ng-container *ngIf="store.selectedNode() as n; else noSel">
+          <div class="row"><div class="k">NodeId</div><div class="v mono">{{ n.id }}</div></div>
+          <div class="row"><div class="k">PageId</div><div class="v mono">{{ n.pageId }}</div></div>
+          <div class="row"><div class="k">Parent</div><div class="v mono">{{ n.parentId || 'ROOT' }}</div></div>
+
+          <div class="row">
+            <div class="k">Title</div>
+            <div class="v">
+              <input class="input" [ngModel]="titleDraft()" (ngModelChange)="titleDraft.set($event)" />
+              <button class="btn small" (click)="saveTitle()">Save</button>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="k">Thumbnail</div>
+            <div class="v">
+              <div class="thumb">
+                <img *ngIf="n.snapshotImage; else noImg" [src]="n.snapshotImage" />
+                <ng-template #noImg>
+                  <div class="thumb-empty">अभी crop image नहीं है</div>
+                </ng-template>
+              </div>
+            </div>
+          </div>
+
+          <div class="row"><div class="k">Children</div><div class="v mono">{{ n.childrenIds.length }}</div></div>
+        </ng-container>
+
+        <ng-template #noSel>
+          <div class="muted">कोई node select नहीं है</div>
+        </ng-template>
+      </div>
+    </aside>
+
+    <!-- RIGHT CANVAS FULL WIDTH -->
+    <main class="mm-canvas-area">
+      <div class="canvas-head">
+        <div class="canvas-title">Mindmap Canvas</div>
+        <div class="canvas-hint muted">Click node → select | Drag → move</div>
+
+        <div class="canvas-stats mono">
+          Nodes: {{ (store.nodesMap() | keyvalue).length }} |
+          Selected: {{ store.selectedNodeId() || '-' }}
+        </div>
+      </div>
+
+      <div class="canvas-host" #mindmapHost></div>
+    </main>
+  </div>
+</div>

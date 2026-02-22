@@ -1,0 +1,211 @@
+<div class="app-shell">
+  <!-- =======================
+       LEFT: NOTEBOOKS
+  ======================== -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="title">Notebooks</div>
+      <button class="btn" (click)="addNotebook()">+ New</button>
+    </div>
+
+    <div class="list">
+      <div
+        class="list-item"
+        *ngFor="let nb of notebooks()"
+        [class.active]="nb.id === activeNotebookId()"
+        (click)="setNotebook(nb)"
+      >
+        <div class="item-main">
+          <ng-container *ngIf="renamingNotebookId() !== nb.id; else nbRename">
+            <span class="item-title">{{ nb.title }}</span>
+          </ng-container>
+
+ <ng-template #nbRename>
+<input
+  class="rename-input"
+  [ngModel]="notebookDraft()"
+  (ngModelChange)="notebookDraft.set($event)"
+  (keydown.enter)="commitRenameNotebook(nb)"
+  (mousedown)="$event.stopPropagation()"
+  (pointerdown)="$event.stopPropagation()"
+  (click)="$event.stopPropagation()"
+  (blur)="commitRenameNotebook(nb)"
+  autofocus
+/>
+</ng-template>
+        </div>
+
+        <div class="item-actions" (click)="$event.stopPropagation()">
+          <button class="icon" title="Rename" (click)="startRenameNotebook(nb)">✎</button>
+          <button class="icon danger" title="Delete" (click)="deleteNotebook(nb)">🗑</button>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- =======================
+       MAIN AREA
+  ======================== -->
+  <main class="main">
+    <!-- =======================
+         TOP: SECTIONS TABS
+    ======================== -->
+    <div class="topbar">
+      <div class="tabs">
+        <div
+          class="tab"
+          *ngFor="let sec of sections()"
+          [class.active]="sec.id === activeSectionId()"
+          (click)="setSection(sec)"
+        >
+          <ng-container *ngIf="renamingSectionId() !== sec.id; else secRename">
+            <span>{{ sec.title }}</span>
+          </ng-container>
+
+<ng-template #secRename>
+  <input
+    class="tab-input"
+    [ngModel]="sectionDraft()"
+    (ngModelChange)="sectionDraft.set($event)"
+    (keydown.enter)="commitRenameSection(sec)"
+    (mousedown)="$event.stopPropagation()"
+    (pointerdown)="$event.stopPropagation()"
+    (click)="$event.stopPropagation()"
+    (blur)="commitRenameSection(sec)"
+    autofocus
+  />
+</ng-template>
+
+          <span class="tab-actions" (click)="$event.stopPropagation()">
+            <button class="icon" title="Rename" (click)="startRenameSection(sec)">✎</button>
+            <button class="icon danger" title="Delete" (click)="deleteSection(sec)">🗑</button>
+          </span>
+        </div>
+      </div>
+
+      <div class="topbar-actions">
+        <button class="btn" (click)="addSection()">+ Section</button>
+      </div>
+    </div>
+    <button
+  class="btn"
+  style="margin-top: 12px;"
+  [disabled]="!activeNotebookId()"
+  [routerLink]="['/mindmap', activeNotebookId()]"
+>
+  Open Mindmap
+</button>
+
+    <!-- =======================
+         CONTENT: PAGES + PANEL
+    ======================== -->
+    <div class="content">
+      <!-- PAGES LIST -->
+      <section class="pages">
+        <div class="pages-header">
+          <div class="title">Pages</div>
+          <button class="btn" (click)="addPage()">+ Page</button>
+        </div>
+
+        <div class="list">
+          <div
+            class="page-item"
+            *ngFor="let p of pages()"
+            [class.active]="p.id === activePageId()"
+            (click)="setPage(p)"
+          >
+            <div class="page-main">
+              <ng-container *ngIf="renamingPageId() !== p.id; else pageRename">
+                <div class="page-title">{{ p.title }}</div>
+                <div class="page-meta">{{ p.updatedAt | date:'short' }}</div>
+              </ng-container>
+
+<ng-template #pageRename>
+  <input
+    class="rename-input"
+    [ngModel]="pageDraft()"
+    (ngModelChange)="pageDraft.set($event)"
+    (keydown.enter)="commitRenamePage(p)"
+    (mousedown)="$event.stopPropagation()"
+    (click)="$event.stopPropagation()"
+    (blur)="commitRenamePage(p)"
+  />
+</ng-template>
+            </div>
+
+            <div class="item-actions" (click)="$event.stopPropagation()">
+              <button class="icon" title="Rename" (click)="startRenamePage(p)">✎</button>
+              <button class="icon danger" title="Delete" (click)="deletePage(p)">🗑</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT PANEL -->
+      <section class="panel">
+        <div class="panel-header">
+          <div class="title">{{ activePage()?.title || 'No Page Selected' }}</div>
+          <div class="hint">Step-2 में यही panel Editor बनेगा (Konva)</div>
+        </div>
+
+        <div class="panel-body panel-body--scroll">
+          <div class="empty-card" *ngIf="!activePage(); else pageInfo">
+            Select a page to start.
+          </div>
+
+          <ng-template #pageInfo>
+            <!-- ✅ UPDATED: Show Titles + IDs (instead of only IDs) -->
+            <div class="info-grid">
+              <div class="kv">
+                <div class="k">Notebook</div>
+                <div class="v">
+                  {{ activeNotebook()?.title || 'Untitled notebook' }}
+                  <div class="muted">ID: {{ activeNotebookId() }}</div>
+                </div>
+              </div>
+
+              <div class="kv">
+                <div class="k">Section</div>
+                <div class="v">
+                  {{ activeSection()?.title || 'Untitled section' }}
+                  <div class="muted">ID: {{ activeSectionId() }}</div>
+                </div>
+              </div>
+
+              <div class="kv">
+                <div class="k">Page</div>
+                <div class="v">
+                  {{ activePage()?.title || 'Untitled page' }}
+                  <div class="muted">ID: {{ activePageId() }}</div>
+                </div>
+              </div>
+
+              <div class="kv">
+                <div class="k">Saved</div>
+                <div class="v">{{ state().lastSavedAt | date:'short' }}</div>
+              </div>
+            </div>
+
+            <div class="preview" *ngIf="activePage()?.previewDataUrl">
+              <div class="preview-title">Preview</div>
+              <img [src]="activePage()?.previewDataUrl" alt="preview" />
+            </div>
+
+            <button
+              class="btn"
+              style="margin-top: 12px;"
+              [disabled]="!activePageId()"
+              [routerLink]="['/editor', activePageId()]"
+            >
+              Open in Editor
+            </button>
+
+            <div class="next-note">
+              Next: “Open in Editor” button add करेंगे और pageId pass करेंगे.
+            </div>
+          </ng-template>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>

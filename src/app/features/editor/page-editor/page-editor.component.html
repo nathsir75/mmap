@@ -1,0 +1,179 @@
+<div class="pe-root">
+  <!-- TOP TOOLBAR -->
+  <header class="pe-toolbar">
+    <div class="left">
+      <button class="btn" (click)="onBack()">← Back</button>
+
+      <div class="badge">
+        <span class="title">Editor</span>
+        <span class="pill">v1</span>
+      </div>
+    </div>
+
+    <div class="center">
+<button class="tool" [class.active]="tool==='select'" (click)="setTool('select')">Select</button>
+<button class="tool" [class.active]="tool==='text'" (click)="setTool('text')">Text</button>
+<button class="tool" [class.active]="tool==='image'" (click)="setTool('image')">Image</button>
+<input
+  #canvasImageInput
+  type="file"
+  accept="image/*"
+  style="display:none"
+  (change)="onCanvasImagePicked($event)"
+/>
+<button class="tool" [class.active]="tool==='pen'" (click)="setTool('pen')">Pen</button>
+<button class="tool" [class.active]="tool==='highlighter'" (click)="setTool('highlighter')">Highlighter</button>
+<button class="tool" [class.active]="tool==='eraser'" (click)="setTool('eraser')">Eraser</button>
+
+<!-- ✅ Node Image Upload (Insert inside selected rect node) -->
+<div class="pe-tool-group">
+  <button class="pe-btn" type="button" (click)="openNodeImagePicker()">
+    Node Image
+  </button>
+
+  <input
+    #nodeImageInput
+    class="pe-hidden-file"
+    type="file"
+    accept="image/*"
+    (change)="onNodeImagePicked($event)"
+  />
+</div>
+
+
+
+      <!-- ✅ Options row (UI only) -->
+      <div class="pe-options">
+        <!-- Text options -->
+        <div class="opt-group">
+          <span class="opt-label">Font</span>
+<select class="select" [value]="fontFamily" (change)="onFontFamilyChange(($any($event.target)).value)">
+  <option>Inter</option>
+  <option>Arial</option>
+  <option>Calibri</option>
+  <option>Times New Roman</option>
+  <option>Courier New</option>
+</select>
+
+
+          <span class="opt-label">Size</span>
+<select class="select" [value]="fontSize" (change)="onFontSizeChange(($any($event.target)).value)">
+  <option>12</option>
+  <option>14</option>
+  <option>16</option>
+  <option>18</option>
+  <option>20</option>
+  <option>24</option>
+  <option>28</option>
+  <option>32</option>
+  <option>40</option>
+  <option>48</option>
+</select>
+        </div>
+
+        <!-- Stroke options (Pen/Eraser) -->
+        <div class="opt-group">
+          <span class="opt-label">Thickness</span>
+<input class="range" type="range" min="1" max="40" [value]="thickness"
+       (input)="onThicknessInput(($any($event.target)).value)" />
+<span class="chip">{{ thickness }}px</span>
+
+        </div>
+
+        <!-- Shapes -->
+        <div class="opt-group">
+          <span class="opt-label">Shapes</span>
+<button class="shape-btn" [class.active]="shapeTool==='rect'" (click)="setShapeTool('rect'); addShape('rect')" title="Rectangle">▭</button>
+<button class="shape-btn" [class.active]="shapeTool==='circle'" (click)="setShapeTool('circle'); addShape('circle')" title="Circle">◯</button>
+<button class="shape-btn" [class.active]="shapeTool==='diamond'" (click)="setShapeTool('diamond'); addShape('diamond')" title="Diamond">◇</button>
+<button class="shape-btn" [class.active]="shapeTool==='arrow'" (click)="setShapeTool('arrow'); addShape('arrow')" title="Arrow">➝</button>
+
+
+        </div>
+        <div class="divider">
+          <!-- ✅ Color Picker (single for all tools) -->
+<button class="btn" (click)="onClickCropSelection()">Crop</button>
+
+
+
+        </div>
+      </div>
+    </div>
+
+    <div class="right">
+
+     <label class="opt-label">Color</label>
+<input
+  type="color"
+  class="color-input"
+  [value]="toolColor"
+  (input)="onToolColorChange(($any($event.target)).value)"
+/> 
+      <!-- Layer + Group Controls -->
+<div class="pe-actions">
+  <button class="btn ghost" (click)="sendSelectionToBG()">BG</button>
+  <button class="btn ghost" (click)="sendSelectionToFG()">FG</button>
+ 
+
+  <div class="divider"></div>
+<button type="button" (click)="sendBackward()">⬇ Back</button>
+<button type="button" (click)="bringForward()">⬆ Front</button>
+  
+   <div class="divider"></div>
+
+<button class="btn ghost"
+  (mousedown)="$event.stopPropagation()"
+  (touchstart)="$event.stopPropagation()"
+  (click)="onClickGroup()">Group</button>
+
+<button class="btn ghost"
+  (mousedown)="$event.stopPropagation()"
+  (touchstart)="$event.stopPropagation()"
+  (click)="onClickUngroup()">Ungroup</button>
+</div>
+
+
+
+
+<button class="btn ghost"
+  (mousedown)="$event.stopPropagation()"
+  (touchstart)="$event.stopPropagation()"
+  (click)="tool='lasso'">Lasso</button>
+      <button class="btn primary" (click)="onClickSave()">Save</button>
+<button class="btn" (click)="onClickSavePreview()">Save Preview</button>
+    </div>
+  </header>
+
+  <!-- CANVAS AREA -->
+<main class="pe-stage-area">
+  <div class="pe-stage-surface">
+    <div #stageHost class="pe-stage-host"></div>
+
+    <!-- ✅ Text Edit Overlay (yahin add karo) -->
+<textarea
+  *ngIf="isEditingText"
+  class="text-editor"
+  [ngStyle]="{
+    left: editUi.left + 'px',
+    top: editUi.top + 'px',
+    width: editUi.width + 'px',
+    height: editUi.height + 'px',
+    fontFamily: editUi.fontFamily,
+    fontSize: editUi.fontSize + 'px'
+  }"
+  [(ngModel)]="editUi.value"
+  (input)="onTextEditorInput()"
+  (keydown)="onEditKeydown($event)"
+  (blur)="commitEdit()"
+></textarea>
+  </div>
+</main>
+
+
+  <!-- BOTTOM STATUS BAR -->
+  <footer class="pe-status">
+    <span>Status: Ready</span>
+    <span class="dot">•</span>
+    <span>Mode: Select</span>
+  </footer>
+</div>
